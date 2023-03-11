@@ -1,8 +1,8 @@
 {
-  "name": "lnd_feescale",
+  "name": "lnd_scalefee",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "scalefee.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
