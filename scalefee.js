@@ -79,7 +79,7 @@ async function onSchedule(arg) {
 function calculateNewFee(channel) {
   const local_balance = parseInt(channel.local_balance)
   const remote_balance = parseInt(channel.remote_balance)
-  const ratio = local_balance / (local_balance + remote_balance)
+  const ratio = remote_balance / (local_balance + remote_balance)
   const fee_range = config.lnd.max_fee - config.lnd.min_fee
   return config.lnd.min_fee + Math.round(ratio * fee_range)
 }
