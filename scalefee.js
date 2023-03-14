@@ -25,7 +25,7 @@ let identity_pubkey
   if (process.argv.length > 2) {
     onSchedule(process.argv[2]);
   } else {
-    cron.schedule('0 * * * *', () => onSchedule());
+    cron.schedule('* * * * *', () => onSchedule());
   }
 })()
 
