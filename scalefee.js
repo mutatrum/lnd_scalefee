@@ -49,7 +49,7 @@ async function onSchedule(arg) {
       if (Math.abs(fee.fee_per_mil - new_fee) > config.lnd.threshold) {
         const nodeinfo = await request('GET', `/v1/graph/node/${channel.remote_pubkey}`)
 
-        console.log(`${nodeinfo.node.alias}: ${fee.fee_per_mil} -> ${new_fee} ppm (local: ${channel.local_balance}, remote: ${channel.capacity}, ratio: ${ratio.toFixed(2)})`)
+        console.log(`${nodeinfo.node.alias}: ${fee.fee_per_mil} -> ${new_fee} ppm (local: ${channel.local_balance}, remote: ${channel.remote_balance}, capacity: ${capacity}, ratio: ${ratio.toFixed(2)})`)
 
         if (arg) continue
 
