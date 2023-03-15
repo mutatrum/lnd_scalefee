@@ -40,12 +40,16 @@ async function onSchedule(arg) {
 
       if (!fee) return
 
-      const new_fee = calculateNewFee(channel)
+      const local_balance = parseInt(channel.local_balance)
+      const remote_balance = parseInt(channel.remote_balance)
+      const ratio = remote_balance / (local_balance + remote_balance)
+      const fee_range = config.lnd.max_fee - config.lnd.min_fee
+      const new_fee = config.lnd.min_fee + Math.round(ratio * fee_range)
 
       if (Math.abs(fee.fee_per_mil - new_fee) > config.lnd.threshold) {
         const nodeinfo = await request('GET', `/v1/graph/node/${channel.remote_pubkey}`)
 
-        console.log(`${nodeinfo.node.alias}: ${fee.fee_per_mil} -> ${new_fee} ppm`)
+        console.log(`${nodeinfo.node.alias}: ${fee.fee_per_mil} -> ${new_fee} ppm (local: ${channel.local_balance}, remote: ${channel.remote_balance}, ratio: ${ratio.toFixed(2)})`)
 
         if (arg) continue
 
@@ -74,14 +78,6 @@ async function onSchedule(arg) {
   catch (error) {
     console.log(error)
   }
-}
-
-function calculateNewFee(channel) {
-  const local_balance = parseInt(channel.local_balance)
-  const remote_balance = parseInt(channel.remote_balance)
-  const ratio = remote_balance / (local_balance + remote_balance)
-  const fee_range = config.lnd.max_fee - config.lnd.min_fee
-  return config.lnd.min_fee + Math.round(ratio * fee_range)
 }
 
 function request(method, uri, requestBody) {
