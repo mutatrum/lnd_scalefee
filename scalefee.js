@@ -40,6 +40,8 @@ async function onSchedule(arg) {
 
       if (!fee) return
 
+      if ((channel.unsettled_balance) !== 0) return
+
       const local_balance = parseInt(channel.local_balance)
       const capacity = parseInt(channel.capacity)
       const ratio = 1 - (local_balance / capacity)
