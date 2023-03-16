@@ -40,18 +40,21 @@ async function onSchedule(arg) {
 
       if (!fee) return
 
-      if ((channel.unsettled_balance) !== "0") return
+      const unsettled_balance = parseInt(channel.unsettled_balance)
+
+      if (unsettled_balance > 0) return // Pending HTLCs throw of the local/remote balance ratio
 
       const local_balance = parseInt(channel.local_balance)
+      const remote_balance = parseInt(channel.remote_balance)
       const capacity = parseInt(channel.capacity)
-      const ratio = 1 - (local_balance / capacity)
+      const ratio = remote_balance / (local_balance + remote_balance)
       const fee_range = config.lnd.max_fee - config.lnd.min_fee
       const new_fee = config.lnd.min_fee + Math.round(ratio * fee_range)
 
       if (Math.abs(fee.fee_per_mil - new_fee) > config.lnd.threshold) {
         const nodeinfo = await request('GET', `/v1/graph/node/${channel.remote_pubkey}`)
 
-        console.log(`${nodeinfo.node.alias}: ${fee.fee_per_mil} -> ${new_fee} ppm (local: ${channel.local_balance}, remote: ${channel.remote_balance}, capacity: ${capacity}, ratio: ${ratio.toFixed(2)})`)
+        console.log(`${nodeinfo.node.alias}: ${fee.fee_per_mil} -> ${new_fee} ppm (local: ${local_balance}, remote: ${remote_balance}, capacity: ${capacity}, ratio: ${ratio.toFixed(2)})`)
 
         if (arg) continue
 
