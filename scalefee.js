@@ -36,13 +36,11 @@ async function onSchedule(arg) {
 
     for (var channel of channels.channels) {
 
-      let fee = fees.channel_fees.find(fee => fee.chan_id === channel.chan_id)
-
-      if (!fee) continue
-
       const unsettled_balance = parseInt(channel.unsettled_balance)
-
       if (unsettled_balance > 0) continue // Pending HTLCs throw of the local/remote balance ratio
+
+      let fee = fees.channel_fees.find(fee => fee.chan_id === channel.chan_id)
+      if (!fee) continue
 
       const local_balance = parseInt(channel.local_balance)
       const remote_balance = parseInt(channel.remote_balance)
